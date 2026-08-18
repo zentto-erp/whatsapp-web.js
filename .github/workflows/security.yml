@@ -1,0 +1,25 @@
+name: Security
+
+# Onboarding de cobertura (ZENTTO-CICD-001). El reusable ya gatea internamente:
+# los jobs corren SOLO en el camino a main (push main / PR base main / cron / dispatch)
+# y se saltan en developer (0 minutos). fail-on: none = advisory (ZENTTO-CICD-008).
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  security:
+    uses: zentto-erp/.github/.github/workflows/security.yml@main
+    with:
+      fail-on: none
+      run-gitleaks: true
+    secrets: inherit
